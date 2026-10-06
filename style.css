@@ -26,3 +26,4 @@ nav a.on{color:var(--acc);box-shadow:inset 0 3px var(--acc)}
 .ax{font-size:9px;fill:var(--mute)}svg{max-width:100%}
 dialog{width:min(92vw,480px);border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:16px}
 dialog::backdrop{background:#0008}
+dialog{max-height:88vh;overflow:auto}.tx{cursor:pointer}

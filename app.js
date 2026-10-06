@@ -58,7 +58,7 @@ function filtered(){const q=($('q').value||'').toLowerCase();
  return S.txns.filter(t=>FF.every(([k])=>!F[k]||t[k]==F[k])&&(!F.from||t.date>=F.from)&&(!F.to||t.date<=F.to)&&(!q||[t.name,t.shop,t.cat,t.parent,t.acct,t.budget].join(' ').toLowerCase().includes(q))).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0)}
 function renderTx(){const r=filtered(),k=Object.values(F).filter(Boolean).length;$('fo').textContent='Filter'+(k?` (${k})`:'');
  $('ts').textContent=`${r.length} of ${S.txns.length} · net ${money(r.reduce((s,t)=>s+t.net,0))}`;
- $('tl').innerHTML=r.slice(0,lim).map(t=>`<div class="tx" style="--h:${hue(t.type)}"><div class="top"><b>${h(t.name||t.cat||t.type)}</b><span class="amt ${t.net<0?'n':''}">${t.net?money(t.net):''}</span></div>
+ $('tl').innerHTML=r.slice(0,lim).map(t=>`<div class="tx" data-id="${h(t.id)}" style="--h:${hue(t.type)}"><div class="top"><b>${h(t.name||t.cat||t.type)}</b><span class="amt ${t.net<0?'n':''}">${t.net?money(t.net):''}</span></div>
  <small>${h(t.date)}${t.shop?' · '+h(t.shop):''}${t.hist||t.sent?'':' · not exported'}</small><div>${chip(t.type)}${chip(t.acct)}${chip(t.parent)}${chip(t.cat)}</div></div>`).join('')||'<p class="mute">No transactions match.</p>';
  $('more').style.display=r.length>lim?'block':'none'}
 $('more').onclick=()=>{lim+=100;renderTx()};$('q').oninput=()=>{lim=100;renderTx()};
@@ -66,6 +66,22 @@ $('fo').onclick=()=>{$('ff').innerHTML=FF.map(([k,l])=>`<label>${l}</label><sele
  FF.forEach(([k])=>opt($('f_'+k),vals(k),F[k]||'','All'));$('f_from').value=F.from||'';$('f_to').value=F.to||'';$('fd').showModal()};
 $('fa').onclick=()=>{[...FF.map(x=>x[0]),'from','to'].forEach(k=>F[k]=$('f_'+k).value);lim=100;$('fd').close();renderTx()};
 $('fr').onclick=()=>{F={};$('fd').close();renderTx()};
+
+// ---------- edit ----------
+let ET=null;const withCur=(l,c)=>['',...(c&&!l.includes(c)?[c]:[]),...l];
+$('tl').onclick=e=>{const d=e.target.closest('.tx');ET=d&&S.txns.find(t=>t.id==d.dataset.id);if(!ET)return;const t=ET;
+ $('ef').innerHTML='<label>Date</label><input type="date" id="e_date"><label>Type</label><select id="e_type"></select><label>Net impact (negative = money out)</label><input id="e_net" type="number" step="0.01" inputmode="decimal"><label>Transaction name</label><input id="e_name"><label>Company/shop</label><select id="e_shop"></select><label>Account</label><select id="e_acct"></select><label>Share price (Shares accounts only)</label><input id="e_price" type="number" step="0.0001" inputmode="decimal"><label>Parent category</label><select id="e_parent"></select><label>Spending category</label><select id="e_cat"></select><label>Affected budget</label><input id="e_budget">';
+ $('e_date').value=t.date||'';opt($('e_type'),withCur(TYPES.map(x=>x[0]),t.type),t.type||'');$('e_net').value=t.net||'';$('e_name').value=t.name||'';
+ opt($('e_shop'),withCur(shops(),t.shop),t.shop||'');opt($('e_acct'),withCur(S.accounts.map(a=>a.name),t.acct),t.acct||'');$('e_price').value=t.price??'';
+ opt($('e_parent'),withCur([...new Set(S.cats.map(c=>c.p))],t.parent),t.parent||'');
+ opt($('e_cat'),withCur(S.cats.filter(c=>c.p==t.parent).map(c=>c.c),t.cat),t.cat||'');$('e_budget').value=t.budget||'';
+ $('e_parent').onchange=()=>opt($('e_cat'),withCur(S.cats.filter(c=>c.p==$('e_parent').value).map(c=>c.c),''),'');
+ $('ed').showModal()};
+$('ec').onclick=()=>$('ed').close();
+$('es').onclick=()=>{const net=num($('e_net').value)||0;if(!$('e_date').value)return alert('Enter a date.');
+ Object.assign(ET,{date:$('e_date').value,type:$('e_type').value,net,amt:Math.abs(net),name:$('e_name').value.trim(),shop:$('e_shop').value,acct:$('e_acct').value,price:num($('e_price').value),parent:$('e_parent').value,cat:$('e_cat').value,budget:$('e_budget').value.trim()});
+ if(!ET.hist)ET.sent=0;save();$('ed').close();render()};
+$('edl').onclick=()=>{if(confirm('Delete this transaction from this phone?')){S.txns=S.txns.filter(x=>x!==ET);save();$('ed').close();render()}};
 
 // ---------- charts ----------
 function donut(items){const tot=items.reduce((s,x)=>s+x[1],0);if(!tot)return'<p class="mute">No data.</p>';let o=0;const C=2*Math.PI*40;
