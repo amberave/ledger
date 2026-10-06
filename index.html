@@ -5,6 +5,7 @@
 <link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css">
 <title>Ledger</title></head><body><main>
 <section id="add" class="sec on"><h2>New transaction</h2>
+<label>Template</label><select id="tp"></select><button class="s sm" id="sat">Save form as template</button>
 <div class="row"><div><label>Date</label><input type="date" id="d"></div><div><label>Type</label><select id="ty"></select></div></div>
 <label>Amount</label><input id="am" type="number" step="0.01" inputmode="decimal" placeholder="0.00">
 <label>Transaction name</label><input id="nm"><label>Company/shop</label><select id="sh"></select>
@@ -31,7 +32,9 @@
 <h3>Breakdown by</h3><select id="eg"><option value="cat">Category</option><option value="parent">Parent category</option><option value="shop">Company/shop</option><option value="acct">Account</option></select><div id="c3"></div></section>
 
 <section id="rc" class="sec"><h2>Repeating</h2><div id="rl2"></div>
-<p class="mute">Add one from the Add tab using "Repeat". Due transactions are created when you open the app.</p></section>
+<p class="mute">Add one from the Add tab using "Repeat". Due transactions are created when you open the app.</p>
+<h2 style="margin-top:30px">Templates</h2><div id="tpl"></div><button class="s" id="tpn">New template</button>
+<p class="mute">Pick a template at the top of the Add tab to pre-fill the form. Tap one here to edit it.</p></section>
 
 <section id="dt" class="sec"><h2>Sync</h2><p class="mute" id="st"></p>
 <button id="ex">Export new transactions</button><button class="s" id="exf">Export full transactions.csv</button><button class="s" id="exa">Export all phone transactions</button>
@@ -41,5 +44,6 @@
 </main>
 <dialog id="fd"><h2>Filter</h2><div id="ff"></div><div class="row"><button class="s" id="fr">Clear</button><button id="fa">Show</button></div></dialog>
 <dialog id="ed"><h2>Edit transaction</h2><div id="ef"></div><div class="row"><button class="s" id="ec">Cancel</button><button id="es">Save</button></div><button class="s" id="edl" style="color:var(--neg)">Delete transaction</button></dialog>
+<dialog id="td"><h2>Template</h2><div id="tf"></div><div class="row"><button class="s" id="tpc">Cancel</button><button id="tps">Save</button></div><button class="s" id="tpd" style="color:var(--neg)">Delete template</button></dialog>
 <nav><a href="#add" class="on">Add</a><a href="#tx">Txns</a><a href="#acc">Accounts</a><a href="#ch">Charts</a><a href="#rc">Repeat</a><a href="#dt">Sync</a></nav>
 <script src="app.js"></script></body></html>

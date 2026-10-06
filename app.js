@@ -1,6 +1,6 @@
 // Edit to match your Transaction Type values: [label, sign applied to Net Impact]
 const TYPES=[['⭕️ Expense',-1],['✅ Income',1]];
-const K='ledger1';let S={accounts:[],cats:[],shops:[],txns:[],rules:[]},F={},lim=100;
+const K='ledger1';let S={accounts:[],cats:[],shops:[],txns:[],rules:[],tpls:[],tplDef:''},F={},lim=100;
 try{S=Object.assign(S,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){alert('Could not save: browser storage is blocked or full.')}};
 const $=i=>document.getElementById(i),h=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -15,7 +15,7 @@ const chip=s=>s?`<span class="chip" style="--h:${hue(s)}">${h(s)}</span>`:'';
 const today=()=>new Date().toLocaleDateString('en-CA'),z2=n=>String(n).padStart(2,'0');
 const opt=(el,a,v,first)=>{el.innerHTML=(first!=null?`<option value="">${first}</option>`:'')+a.map(x=>`<option>${h(x)}</option>`).join('');if(v!=null&&[...el.options].some(o=>o.value==v))el.value=v};
 const acct=n=>S.accounts.find(a=>a.name==n),phone=()=>S.txns.filter(t=>!t.hist);
-const shops=()=>[...new Set([...S.shops,...S.txns.map(t=>t.shop)].filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+const shops=()=>[...new Set([...S.shops,...S.tpls.map(t=>t.shop),...S.txns.map(t=>t.shop)].filter(Boolean))].sort((a,b)=>a.localeCompare(b));
 const bal=a=>{const t=S.txns.filter(x=>x.acct==a.name),b=(a.init||0)+t.reduce((s,x)=>s+x.net,0);if(a.type!='Shares')return b;
  const p=t.filter(x=>x.price&&x.date).sort((x,y)=>x.date<y.date?1:-1)[0];return b*((p?p.price:a.price)||0)};
 
@@ -35,8 +35,34 @@ $('sv').onclick=()=>{
  const f={date:$('d').value,type:$('ty').value,name:$('nm').value.trim(),shop:$('sh').value,acct:a.name,net:sign*Math.abs(amt),parent:$('pc').value,price:sh?num($('pr').value):null,cat:$('ct').value,amt:Math.abs(amt),budget:$('bd').value.trim()};
  if($('rp').value){S.rules.push({...f,id:Date.now().toString(36),start:f.date,freq:$('rp').value,end:$('re').value,n:0});genRules()}
  else S.txns.push({id:'P'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),sent:0,...f});
- save();['am','nm','bd'].forEach(i=>$(i).value='');$('rp').value='';$('rp').onchange();
+ save();['am','nm','bd'].forEach(i=>$(i).value='');$('rp').value='';$('rp').onchange();applyDef();
  $('msg').textContent='Saved. Export it from the Sync tab when ready.';render()};
+
+// ---------- templates ----------
+function applyTpl(id){const t=S.tpls.find(x=>x.id==id);if(!t)return;
+ if(TYPES.some(x=>x[0]==t.type))$('ty').value=t.type;$('am').value=t.amt??'';$('nm').value=t.nm||'';fillShop(t.shop||'');
+ if(acct(t.acct)){$('ac').value=t.acct;$('pr').value='';acChg()}
+ if(t.parent){$('pc').value=t.parent;fillCat();if(t.cat)$('ct').value=t.cat}$('bd').value=t.budget||''}
+const applyDef=()=>{if(S.tpls.some(t=>t.id==S.tplDef)){$('tp').value=S.tplDef;applyTpl(S.tplDef)}};
+$('tp').onchange=()=>applyTpl($('tp').value);
+$('sat').onclick=()=>{const n=(prompt('Template name')||'').trim();if(!n)return;const id=Date.now().toString(36);
+ S.tpls.push({id,name:n,type:$('ty').value,amt:num($('am').value),nm:$('nm').value.trim(),shop:$('sh').value,acct:$('ac').value,parent:$('pc').value,cat:$('ct').value,budget:$('bd').value.trim()});save();render();$('tp').value=id};
+let TT=null;
+function openTpl(t){TT=t||{id:Date.now().toString(36)};t=t||{};
+ $('tf').innerHTML='<label>Template name</label><input id="t_name"><label>Type</label><select id="t_type"></select><label>Amount (optional)</label><input id="t_amt" type="number" step="0.01" inputmode="decimal"><label>Transaction name</label><input id="t_nm"><label>Company/shop</label><select id="t_shop"></select><label>Account</label><select id="t_acct"></select><label>Parent category</label><select id="t_parent"></select><label>Spending category</label><select id="t_cat"></select><label>Affected budget</label><input id="t_bd"><label><input type="checkbox" id="t_def" style="width:auto"> Fill the Add tab with this by default</label>';
+ $('t_name').value=t.name||'';opt($('t_type'),withCur(TYPES.map(x=>x[0]),t.type),t.type||'');$('t_amt').value=t.amt??'';$('t_nm').value=t.nm||'';
+ opt($('t_shop'),withCur(shops(),t.shop),t.shop||'');opt($('t_acct'),withCur(S.accounts.map(a=>a.name),t.acct),t.acct||'');
+ opt($('t_parent'),withCur([...new Set(S.cats.map(c=>c.p))],t.parent),t.parent||'');opt($('t_cat'),withCur(S.cats.filter(c=>c.p==t.parent).map(c=>c.c),t.cat),t.cat||'');
+ $('t_bd').value=t.budget||'';$('t_def').checked=S.tplDef==TT.id;$('tpd').style.display=t.name?'block':'none';
+ $('t_parent').onchange=()=>opt($('t_cat'),withCur(S.cats.filter(c=>c.p==$('t_parent').value).map(c=>c.c),''),'');$('td').showModal()}
+$('tpn').onclick=()=>openTpl();
+$('tpl').onclick=e=>{const d=e.target.closest('.li');if(d)openTpl(S.tpls.find(t=>t.id==d.dataset.id))};
+$('tpc').onclick=()=>$('td').close();
+$('tps').onclick=()=>{const n=$('t_name').value.trim();if(!n)return alert('Enter a template name.');
+ Object.assign(TT,{name:n,type:$('t_type').value,amt:num($('t_amt').value),nm:$('t_nm').value.trim(),shop:$('t_shop').value,acct:$('t_acct').value,parent:$('t_parent').value,cat:$('t_cat').value,budget:$('t_bd').value.trim()});
+ if(!S.tpls.some(x=>x.id==TT.id))S.tpls.push(TT);if($('t_def').checked)S.tplDef=TT.id;else if(S.tplDef==TT.id)S.tplDef='';
+ save();$('td').close();render();fillForm()};
+$('tpd').onclick=()=>{if(confirm('Delete this template?')){S.tpls=S.tpls.filter(x=>x.id!=TT.id);if(S.tplDef==TT.id)S.tplDef='';save();$('td').close();render()}};
 
 // ---------- recurring ----------
 const FQ={w:'Weekly',f:'Fortnightly',m:'Monthly',y:'Yearly'};
@@ -118,6 +144,8 @@ function render(){
   :'<p class="mute">No accounts yet. Save your Accounts table as CSV and import it on the Sync tab.</p>';
  $('rl2').innerHTML=S.rules.map(r=>`<div class="li"><div>${h(r.name||r.cat)}<small>${FQ[r.freq]} · next ${r.off?'paused':occ(r,r.n)}${r.end?' · until '+r.end:''}</small>${chip(r.acct)}${chip(r.cat)}
   <br><button class="s sm" onclick="rulePause('${r.id}')">${r.off?'Resume':'Pause'}</button><button class="s sm" onclick="ruleDel('${r.id}')">Delete</button></div><div class="amt ${r.net<0?'n':''}">${money(r.net)}</div></div>`).join('')||'<p class="mute">No repeating transactions yet.</p>';
+ const cur=$('tp').value;$('tp').innerHTML='<option value="">No template</option>'+S.tpls.map(t=>`<option value="${h(t.id)}">${h(t.name)}</option>`).join('');$('tp').value=cur;
+ $('tpl').innerHTML=S.tpls.map(t=>`<div class="li" data-id="${h(t.id)}" style="cursor:pointer"><div>${h(t.name)}${S.tplDef==t.id?' · default':''}<small>${h(t.nm||'')}</small>${chip(t.acct)}${chip(t.cat)}</div><div class="amt">${t.amt?money(t.amt):''}</div></div>`).join('')||'<p class="mute">No templates yet.</p>';
  const p=phone(),u=p.filter(t=>!t.sent).length;
  $('st').textContent=`${u} not yet exported · ${p.length} entered on this phone · ${S.txns.length-p.length} history rows · ${S.accounts.length} accounts · ${shops().length} shops`;
  $('rl').innerHTML=p.slice(-10).reverse().map(t=>`<div class="li"><div>${h(t.name||t.cat)}<small>${t.date} · ${h(t.acct)}${t.sent?'':' · not exported'}</small></div><div class="amt ${t.net<0?'n':''}">${money(t.net)}</div></div>`).join('')||'<p class="mute">Nothing yet.</p>';
@@ -146,11 +174,11 @@ $('im').onchange=async e=>{const log=[];
   else if('Company/Shop'in x0){S.shops=r.map(x=>x['Company/Shop']).filter(Boolean);log.push('shops')}
   else log.push('skipped '+f.name)}
  save();fillForm();render();alert('Imported: '+log.join(', '));e.target.value=''};
-$('clr').onclick=()=>{if(confirm('Delete all data on this phone? Unexported transactions will be lost.')){S={accounts:[],cats:[],shops:[],txns:[],rules:[]};save();fillForm();render()}};
+$('clr').onclick=()=>{if(confirm('Delete all data on this phone? Unexported transactions will be lost.')){S={accounts:[],cats:[],shops:[],txns:[],rules:[],tpls:[],tplDef:''};save();fillForm();render()}};
 
 const tabs=[...document.querySelectorAll('nav a')];
 function nav(){const t=(location.hash||'#add').slice(1);document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id==t));tabs.forEach(a=>a.classList.toggle('on',a.hash=='#'+t));scrollTo(0,0)}
 addEventListener('hashchange',nav);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&genRules())render()});
-genRules();fillForm();render();nav();
+genRules();fillForm();render();applyDef();nav();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
