@@ -1,52 +1,160 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f6b5c">
-<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css">
-<title>Ledger</title></head><body><main>
-<section id="add" class="sec on"><h2>New transaction</h2>
-<label>Template</label><select id="tp"></select><button class="s sm" id="sat">Save form as template</button>
-<div class="row"><div><label>Date</label><input type="date" id="d"></div><div><label>Type</label><select id="ty"></select></div></div>
-<label>Amount</label><input id="am" type="number" step="0.01" inputmode="decimal" placeholder="0.00">
-<label>Transaction name</label><input id="nm"><label>Company/shop</label><select id="sh"></select>
-<label>Account</label><select id="ac"></select>
-<div id="pw" style="display:none"><label>Share price</label><input id="pr" type="number" step="0.0001" inputmode="decimal"></div>
-<label>Parent category</label><select id="pc"></select><label>Spending category</label><select id="ct"></select>
-<label>Affected budget (optional)</label><input id="bd">
-<label>Repeat</label><select id="rp"><option value="">Does not repeat</option><option value="w">Weekly</option><option value="f">Fortnightly</option><option value="m">Monthly</option><option value="y">Yearly</option></select>
-<div id="rw" style="display:none"><label>Repeat until (optional)</label><input type="date" id="re"></div>
-<button id="sv">Save</button><p class="mute" id="msg"></p></section>
+<html lang="en">
 
-<section id="tx" class="sec"><h2>Transactions</h2>
-<div class="row"><input id="q" placeholder="Search" type="search"><button class="s" id="fo" style="margin:0;flex:none;width:110px">Filter</button></div>
-<p class="mute" id="ts"></p><div id="tl"></div><button class="s" id="more">Show more</button></section>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#0f6b5c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <title>Ledger</title>
+</head>
 
-<section id="acc" class="sec"><h2>Accounts</h2><details><summary id="ams"></summary><div id="amc"></div></details><div id="al"></div></section>
+<body>
+    <main>
+        <section id="add" class="sec on">
+            <h2>New transaction</h2>
+            <label>Template</label><select id="tp"></select><button class="s sm"
+                id="sat">Save form as template</button>
+            <div class="row">
+                <div><label>Date</label><input type="date" id="d"></div>
+                <div><label>Type</label><select id="ty"></select></div>
+            </div>
+            <label>Amount</label><input id="am" type="number" step="0.01"
+                inputmode="decimal" placeholder="0.00">
+            <label>Transaction name</label><input
+                id="nm"><label>Company/shop</label><select id="sh"></select>
+            <label>Account</label><select id="ac"></select>
+            <div id="pw" style="display:none"><label>Share price</label><input
+                    id="pr" type="number" step="0.0001" inputmode="decimal">
+            </div>
+            <label>Parent category</label><select
+                id="pc"></select><label>Spending category</label><select
+                id="ct"></select>
+            <label>Affected budget (optional)</label><input id="bd">
+            <label>Repeat</label><select id="rp">
+                <option value="">Does not repeat</option>
+                <option value="w">Weekly</option>
+                <option value="f">Fortnightly</option>
+                <option value="m">Monthly</option>
+                <option value="y">Yearly</option>
+            </select>
+            <div id="rw" style="display:none"><label>Repeat until
+                    (optional)</label><input type="date" id="re"></div>
+            <button id="sv">Save</button>
+            <p class="mute" id="msg"></p>
+        </section>
 
-<section id="ch" class="sec"><h2>Overview</h2>
-<h3>Money by account</h3><div id="c0"></div>
-<h3>Income &amp; expenses by month</h3><div class="row"><div><label>From</label><input type="month" id="r1"></div><div><label>To</label><input type="month" id="r2"></div></div><div id="c1"></div>
-<h2 style="margin-top:30px">Explore</h2>
-<div class="row"><select id="ek"><option value="e">Expenses</option><option value="i">Income</option></select><select id="ey"></select><select id="em"></select></div>
-<h3 id="t2"></h3><div id="c2"></div>
-<h3>Breakdown by</h3><select id="eg"><option value="cat">Category</option><option value="parent">Parent category</option><option value="shop">Company/shop</option><option value="acct">Account</option></select><div id="c3"></div></section>
+        <section id="tx" class="sec">
+            <h2>Transactions</h2>
+            <div class="row"><input id="q" placeholder="Search"
+                    type="search"><button class="s" id="fo"
+                    style="margin:0;flex:none;width:110px">Filter</button></div>
+            <p class="mute" id="ts"></p>
+            <div id="tl"></div><button class="s" id="more">Show more</button>
+        </section>
 
-<section id="rc" class="sec"><h2>Repeating</h2><div id="rl2"></div>
-<p class="mute">Add one from the Add tab using "Repeat". Due transactions are created when you open the app.</p>
-<h2 style="margin-top:30px">Templates</h2><div id="tpl"></div><button class="s" id="tpn">New template</button>
-<p class="mute">Pick a template at the top of the Add tab to pre-fill the form. Tap one here to edit it.</p></section>
+        <section id="acc" class="sec">
+            <h2>Accounts</h2>
+            <details>
+                <summary id="ams"></summary>
+                <div id="amc"></div>
+            </details>
+            <div id="al"></div>
+        </section>
 
-<section id="dt" class="sec"><h2>Sync</h2><p class="mute" id="st"></p>
-<button id="ex">Export new transactions</button><button class="s" id="exf">Export full transactions.csv</button><button class="s" id="exa">Export all phone transactions</button>
-<h3>Reference data</h3><p class="mute">Download accounts, categories or shops, including anything you added on this phone.</p>
-<div class="row" id="xr"><button class="s" data-x="accounts">Accounts</button><button class="s" data-x="cats">Categories</button><button class="s" data-x="shops">Shops</button></div>
-<h3>Import</h3><p class="mute">Choose updated accounts, categories, shops or transaction CSVs. Each one overwrites the matching data on this phone, and you'll be offered a backup first.</p><input type="file" id="im" accept=".csv" multiple>
-<h3>Recent on this phone</h3><div id="rl"></div>
-<button class="s" id="clr">Erase everything on this phone</button></section>
-</main>
-<dialog id="fd"><h2>Filter</h2><div id="ff"></div><div class="row"><button class="s" id="fr">Clear</button><button id="fa">Show</button></div></dialog>
-<dialog id="ed"><h2>Edit transaction</h2><div id="ef"></div><div class="row"><button class="s" id="ec">Cancel</button><button id="es">Save</button></div><button class="s" id="edl" style="color:var(--neg)">Delete transaction</button></dialog>
-<dialog id="td"><h2>Template</h2><div id="tf"></div><div class="row"><button class="s" id="tpc">Cancel</button><button id="tps">Save</button></div><button class="s" id="tpd" style="color:var(--neg)">Delete template</button></dialog>
-<dialog id="ov"><h2>Overwrite existing data?</h2><p id="ovt"></p><button id="ovb">Export existing first, then import</button><button class="s" id="ovg">Import and overwrite</button><button class="s" id="ovn">Cancel</button></dialog>
-<nav><a href="#add" class="on">Add</a><a href="#tx">Txns</a><a href="#acc">Accounts</a><a href="#ch">Charts</a><a href="#rc">Repeat</a><a href="#dt">Sync</a></nav>
-<script src="app.js"></script></body></html>
+        <section id="ch" class="sec">
+            <h2>Overview</h2>
+            <h3>Money by account</h3>
+            <div id="c0"></div>
+            <h3>Income &amp; expenses by month</h3>
+            <div class="row">
+                <div><label>From</label><input type="month" id="r1"></div>
+                <div><label>To</label><input type="month" id="r2"></div>
+            </div>
+            <div id="c1"></div>
+            <h2 style="margin-top:30px">Explore</h2>
+            <div class="row"><select id="ek">
+                    <option value="e">Expenses</option>
+                    <option value="i">Income</option>
+                </select><select id="ey"></select><select id="em"></select>
+            </div>
+            <h3 id="t2"></h3>
+            <div id="c2"></div>
+            <h3>Breakdown by</h3><select id="eg">
+                <option value="cat">Category</option>
+                <option value="parent">Parent category</option>
+                <option value="shop">Company/shop</option>
+                <option value="acct">Account</option>
+            </select>
+            <div id="c3"></div>
+        </section>
+
+        <section id="rc" class="sec">
+            <h2>Repeating</h2>
+            <div id="rl2"></div>
+            <p class="mute">Add one from the Add tab using "Repeat". Due
+                transactions are created when you open the app.</p>
+            <h2 style="margin-top:30px">Templates</h2>
+            <div id="tpl"></div><button class="s" id="tpn">New template</button>
+            <p class="mute">Pick a template at the top of the Add tab to
+                pre-fill the form. Tap one here to edit it.</p>
+        </section>
+
+        <section id="dt" class="sec">
+            <h2>Sync</h2>
+            <p class="mute" id="st"></p>
+            <button id="ex">Export new transactions</button><button class="s"
+                id="exf">Export full transactions.csv</button><button class="s"
+                id="exa">Export all phone transactions</button>
+            <h3>Reference data</h3>
+            <p class="mute">Download accounts, categories or shops, including
+                anything you added on this phone.</p>
+            <div class="row" id="xr"><button class="s"
+                    data-x="accounts">Accounts</button><button class="s"
+                    data-x="cats">Categories</button><button class="s"
+                    data-x="shops">Shops</button></div>
+            <h3>Import</h3>
+            <p class="mute">Choose updated accounts, categories, shops or
+                transaction CSVs. Each one overwrites the matching data on this
+                phone, and you'll be offered a backup first.</p><input
+                type="file" id="im" accept=".csv" multiple>
+            <h3>Recent on this phone</h3>
+            <div id="rl"></div>
+            <button class="s" id="clr">Erase everything on this phone</button>
+        </section>
+    </main>
+    <dialog id="fd">
+        <h2>Filter</h2>
+        <div id="ff"></div>
+        <div class="row"><button class="s" id="fr">Clear</button><button
+                id="fa">Show</button></div>
+    </dialog>
+    <dialog id="ed">
+        <h2>Edit transaction</h2>
+        <div id="ef"></div>
+        <div class="row"><button class="s" id="ec">Cancel</button><button
+                id="es">Save</button></div><button class="s" id="edl"
+            style="color:var(--neg)">Delete transaction</button>
+    </dialog>
+    <dialog id="td">
+        <h2>Template</h2>
+        <div id="tf"></div>
+        <div class="row"><button class="s" id="tpc">Cancel</button><button
+                id="tps">Save</button></div><button class="s" id="tpd"
+            style="color:var(--neg)">Delete template</button>
+    </dialog>
+    <dialog id="ov">
+        <h2>Overwrite existing data?</h2>
+        <p id="ovt"></p><button id="ovb">Export existing first, then
+            import</button><button class="s" id="ovg">Import and
+            overwrite</button><button class="s" id="ovn">Cancel</button>
+    </dialog>
+    <nav><a href="#add" class="on">Add</a><a href="#tx">Txns</a><a
+            href="#acc">Accounts</a><a href="#ch">Charts</a><a
+            href="#rc">Repeat</a><a href="#dt">Sync</a></nav>
+    <script src="app.js"></script>
+</body>
+
+</html>
