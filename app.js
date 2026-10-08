@@ -862,7 +862,7 @@ function render() {
       b
         .map(
           ([a, i]) =>
-            `<div class="li" data-n="${h(a.name)}" style="cursor:pointer"><div>${h(a.name)}<small>${bad(a.inst) ? "" : h(a.inst) + " "}${chip(a.type)}${i.pr != null ? `<br>${i.u.toLocaleString("en-AU", { maximumFractionDigits: 4 })} units @ ${money(i.pr)}` : ""}</small></div><div class="amt ${i.v < 0 ? "n" : ""}">${money(i.v)}</div></div>`,
+            `<div class="li" data-n="${h(a.name)}" style="cursor:pointer"><div>${h(a.name)}<small>${bad(a.inst) ? "" : h(a.inst) + " "}${i.pr != null ? `<br>${i.u.toLocaleString("en-AU", { maximumFractionDigits: 4 })} units @ ${money(i.pr)}` : ""}</small></div><div class="amt ${i.v < 0 ? "n" : ""}">${money(i.v)}<br>${chip(a.type)}</div></div>`,
         )
         .join("") +
       '<p class="mute">Tap an account to see its transactions.</p>'

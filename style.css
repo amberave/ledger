@@ -134,6 +134,7 @@ nav a.on {
 .amt {
   font-family: Georgia, serif;
   white-space: nowrap;
+  text-align: right;
 }
 .n {
   color: var(--neg);
