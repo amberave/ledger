@@ -1,5 +1,5 @@
-:root{--bg:#f2f4ef;--card:#fff;--ink:#1c2822;--mute:#6a766f;--line:#d9ded6;--acc:#0f6b5c;--neg:#b03a26;color-scheme:light}
-@media(prefers-color-scheme:dark){:root{--bg:#121a16;--card:#1b2620;--ink:#e6ece7;--mute:#93a198;--line:#2b3932;--acc:#4fc3a8;--neg:#ee8b74;color-scheme:dark}}
+:root{--bg:#f2f4ef;--card:#fff;--ink:#1c2822;--mute:#6a766f;--line:#d9ded6;--acc:#0f6b5c;--neg:#b03a26;--pos:#1e8a4c;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#121a16;--card:#1b2620;--ink:#e6ece7;--mute:#93a198;--line:#2b3932;--acc:#4fc3a8;--neg:#ee8b74;--pos:#5ed38b;color-scheme:dark}}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif;padding:env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom))}
 main{max-width:560px;margin:0 auto;padding:16px}
@@ -27,3 +27,4 @@ nav a.on{color:var(--acc);box-shadow:inset 0 3px var(--acc)}
 dialog{width:min(92vw,480px);border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:16px}
 dialog::backdrop{background:#0008}
 dialog{max-height:88vh;overflow:auto}.tx{cursor:pointer}
+summary{cursor:pointer;padding:11px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-weight:600}details>div{padding:6px 4px}.ck{display:flex;align-items:center;gap:10px;margin:8px 0;color:var(--ink);font-size:15px}.ck input{width:auto}

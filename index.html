@@ -21,11 +21,11 @@
 <div class="row"><input id="q" placeholder="Search" type="search"><button class="s" id="fo" style="margin:0;flex:none;width:110px">Filter</button></div>
 <p class="mute" id="ts"></p><div id="tl"></div><button class="s" id="more">Show more</button></section>
 
-<section id="acc" class="sec"><h2>Accounts</h2><div id="al"></div></section>
+<section id="acc" class="sec"><h2>Accounts</h2><details><summary id="ams"></summary><div id="amc"></div></details><div id="al"></div></section>
 
 <section id="ch" class="sec"><h2>Overview</h2>
 <h3>Money by account</h3><div id="c0"></div>
-<h3>Monthly expenses</h3><div id="c1"></div>
+<h3>Income &amp; expenses by month</h3><div class="row"><div><label>From</label><input type="month" id="r1"></div><div><label>To</label><input type="month" id="r2"></div></div><div id="c1"></div>
 <h2 style="margin-top:30px">Explore</h2>
 <div class="row"><select id="ek"><option value="e">Expenses</option><option value="i">Income</option></select><select id="ey"></select><select id="em"></select></div>
 <h3 id="t2"></h3><div id="c2"></div>
@@ -38,12 +38,15 @@
 
 <section id="dt" class="sec"><h2>Sync</h2><p class="mute" id="st"></p>
 <button id="ex">Export new transactions</button><button class="s" id="exf">Export full transactions.csv</button><button class="s" id="exa">Export all phone transactions</button>
-<label>Import CSVs from Excel: accounts, categories, shops, transaction history</label><input type="file" id="im" accept=".csv" multiple>
+<h3>Reference data</h3><p class="mute">Download accounts, categories or shops, including anything you added on this phone.</p>
+<div class="row" id="xr"><button class="s" data-x="accounts">Accounts</button><button class="s" data-x="cats">Categories</button><button class="s" data-x="shops">Shops</button></div>
+<h3>Import</h3><p class="mute">Choose updated accounts, categories, shops or transaction CSVs. Each one overwrites the matching data on this phone, and you'll be offered a backup first.</p><input type="file" id="im" accept=".csv" multiple>
 <h3>Recent on this phone</h3><div id="rl"></div>
 <button class="s" id="clr">Erase everything on this phone</button></section>
 </main>
 <dialog id="fd"><h2>Filter</h2><div id="ff"></div><div class="row"><button class="s" id="fr">Clear</button><button id="fa">Show</button></div></dialog>
 <dialog id="ed"><h2>Edit transaction</h2><div id="ef"></div><div class="row"><button class="s" id="ec">Cancel</button><button id="es">Save</button></div><button class="s" id="edl" style="color:var(--neg)">Delete transaction</button></dialog>
 <dialog id="td"><h2>Template</h2><div id="tf"></div><div class="row"><button class="s" id="tpc">Cancel</button><button id="tps">Save</button></div><button class="s" id="tpd" style="color:var(--neg)">Delete template</button></dialog>
+<dialog id="ov"><h2>Overwrite existing data?</h2><p id="ovt"></p><button id="ovb">Export existing first, then import</button><button class="s" id="ovg">Import and overwrite</button><button class="s" id="ovn">Cancel</button></dialog>
 <nav><a href="#add" class="on">Add</a><a href="#tx">Txns</a><a href="#acc">Accounts</a><a href="#ch">Charts</a><a href="#rc">Repeat</a><a href="#dt">Sync</a></nav>
 <script src="app.js"></script></body></html>
